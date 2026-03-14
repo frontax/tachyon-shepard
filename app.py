@@ -180,20 +180,25 @@ def main():
                 display_df_with_idx = display_df_with_idx[cols]
                 
                 gb = GridOptionsBuilder.from_dataframe(display_df_with_idx)
-                # Ensure columns use flex and fit grid width properly
-                gb.configure_default_column(resizable=True, wrapText=True, autoHeight=True)
+                # Use a default minimum width so columns don't crush on mobile
+                gb.configure_default_column(resizable=True, wrapText=True, autoHeight=True, minWidth=120)
                 gb.configure_column('Original_Index', hide=True)
                 
-                # Make text columns flex to fill any remaining empty space
+                # Make text columns flex to fill any remaining empty space on wide screens,
+                # but respect their minimum widths on narrow screens
                 if '備考' in display_df_with_idx.columns:
-                    gb.configure_column('備考', flex=2, minWidth=150)
+                    gb.configure_column('備考', flex=2, minWidth=200)
                 if 'URL' in display_df_with_idx.columns:
-                    gb.configure_column('URL', flex=1, minWidth=100)
+                    gb.configure_column('URL', flex=1, minWidth=120)
                 if '山名' in display_df_with_idx.columns:
-                    gb.configure_column('山名', flex=1, minWidth=100)
+                    gb.configure_column('山名', flex=1, minWidth=150)
+                if '日付' in display_df_with_idx.columns:
+                    gb.configure_column('日付', minWidth=110)
+                if 'GPX軌跡' in display_df_with_idx.columns:
+                    gb.configure_column('GPX軌跡', minWidth=100)
                     
                 gb.configure_selection('single', use_checkbox=False)
-                gb.configure_grid_options(suppressHorizontalScroll=True)
+                # Removed suppressHorizontalScroll=True to allow mobile scrolling
                 
                 # Make URL clickable if it exists, avoiding HTML string rendering
                 if 'URL' in display_df_with_idx.columns:
@@ -223,19 +228,20 @@ def main():
                     display_df_with_idx,
                     gridOptions=gridOptions,
                     update_mode=GridUpdateMode.SELECTION_CHANGED,
-                    fit_columns_on_grid_load=True,
+                    fit_columns_on_grid_load=False, # Crucial: Let it scroll if too wide
                     theme='streamlit',
                     allow_unsafe_jscode=True, # crucial for JsCode to run
-                    height=400,
+                    height=450,
                     custom_css={
-                        ".ag-row-hover": {"background-color": "#e8f5e9 !important"},
-                        ".ag-row-selected": {"background-color": "#c8e6c9 !important"},
+                        ".ag-row-hover": {"background-color": "rgba(0,165,43,0.05) !important"},
+                        ".ag-row-selected": {"background-color": "rgba(0,165,43,0.15) !important"},
                         ".ag-header-cell-label": {"justify-content": "center !important"},
                         ".ag-header-cell-text": {"text-align": "center"},
-                        ".ag-body-viewport::-webkit-scrollbar": {"width": "8px", "height": "8px", "background": "transparent"},
-                        ".ag-body-viewport::-webkit-scrollbar-thumb": {"background": "transparent", "border-radius": "4px"},
-                        ".ag-body-viewport:hover::-webkit-scrollbar-thumb": {"background": "rgba(0,0,0,0.2)"},
-                        ".ag-body-viewport::-webkit-scrollbar-thumb:hover": {"background": "rgba(0,0,0,0.4)"}
+                        # Adjust scrollbars for the grid
+                        ".ag-body-viewport::-webkit-scrollbar, .ag-body-horizontal-scroll-viewport::-webkit-scrollbar": {"width": "8px", "height": "8px", "background": "transparent"},
+                        ".ag-body-viewport::-webkit-scrollbar-thumb, .ag-body-horizontal-scroll-viewport::-webkit-scrollbar-thumb": {"background": "rgba(0,0,0,0.1)", "border-radius": "4px"},
+                        ".ag-body-viewport:hover::-webkit-scrollbar-thumb, .ag-body-horizontal-scroll-viewport:hover::-webkit-scrollbar-thumb": {"background": "rgba(0,0,0,0.2)"},
+                        ".ag-body-viewport::-webkit-scrollbar-thumb:hover, .ag-body-horizontal-scroll-viewport::-webkit-scrollbar-thumb:hover": {"background": "rgba(0,0,0,0.4)"}
                     }
                 )
                 
