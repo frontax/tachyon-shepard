@@ -6,3 +6,4 @@ folium==0.17.0
 streamlit-folium==0.24.0
 gpxpy==1.6.2
 streamlit-aggrid==1.0.5
+
