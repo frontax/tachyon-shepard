@@ -189,7 +189,7 @@ def main():
                 if '備考' in display_df_with_idx.columns:
                     gb.configure_column('備考', flex=2, minWidth=200)
                 if 'URL' in display_df_with_idx.columns:
-                    gb.configure_column('URL', flex=1, minWidth=120)
+                    gb.configure_column('URL', flex=1, minWidth=120, wrapText=False, autoHeight=False)
                 if '山名' in display_df_with_idx.columns:
                     gb.configure_column('山名', flex=1, minWidth=150)
                 if '日付' in display_df_with_idx.columns:
